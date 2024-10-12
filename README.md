@@ -1,6 +1,16 @@
 # Git Workshop
 
 This is a practical workshop consisting of common Git-related actions.
+It is based on the [`unikraft/catalog-core` repository](https://github.com/unikraft/catalog-core), giving us a concrete Git repository to screw up ... hmmmm ... to do wonderful amazing great things to.
+
+First of all, clone the [repository](https://github.com/rosedu/workshop-git):
+
+```console
+git clone https://github.com/rosedu/workshop-git
+cd workshop-git/
+```
+
+And let's get going! 🚀
 
 ## Inspect Repository
 
