@@ -1,0 +1,12 @@
+# Configure C++ Bye application. Use C++ libraries.
+
+config APPCPPBYE
+bool "Configure C++ Bye"
+default y
+
+	# Select C++ libraries.
+	select LIBCOMPILER_RT
+	select LIBCXX
+	select LIBCXXABI
+	select LIBUNWIND
+	select LIBMUSL

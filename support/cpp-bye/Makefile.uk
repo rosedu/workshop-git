@@ -1,0 +1,3 @@
+$(eval $(call addlib,appbyecpp))
+
+APPBYECPP_SRCS-y += $(APPBYECPP_BASE)/bye.cpp
