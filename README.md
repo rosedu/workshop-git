@@ -12,6 +12,12 @@ cd workshop-git/
 
 And let's get going! 🚀
 
+**Note**: If, at any point in time, you miss a command, or something bad simply happened, reset the environment by running:
+
+```console
+./reset-all.sh
+```
+
 ## Inspect Repository
 
 1. See the current branch and status:
@@ -39,9 +45,17 @@ And let's get going! 🚀
    git branch scripts origin/scripts
    ```
 
+1. See local branches again.
+   Note the difference (green color, `*` - *star* character) between the current branch and other local branches:
+
+   ```console
+   git branch
+   ```
+
 1. Show verbose information about branches:
 
    ```console
+   git branch -v
    git branch -vv
    git branch -vv -a
    ```
@@ -50,10 +64,17 @@ And let's get going! 🚀
 
    ```console
    git checkout base
+   git branch
+   git status
    ls
    git checkout scripts
+   git branch
+   git status
    ls
    git checkout main
+   git branch
+   git status
+   ls
    ```
 
 1. List contents of another branch without checking out:
@@ -71,14 +92,14 @@ And let's get going! 🚀
    The construct `scripts:c-fs` means the `c-fs` filesystem entry in the `scripts` branch.
    Similarly, the construct `scripts:c-fs/rootfs` means the `c-fs/rootfs` filesystem entry in the `scripts` branch.
 
-1. Show contents of file on another branch without checking out:
+1. Show contents of a file on another branch without checking out:
 
    ```console
    git show scripts:c-fs/build.qemu.x86_64
    git show scripts:c-fs/README.scripts.md
    ```
 
-### Do It Yourself.
+### Do It Yourself
 
 1. Do more listing.
    Try out the other commands [here](https://graphite.dev/guides/git-list-all-files).
@@ -790,7 +811,7 @@ And all commits from the `scripts` branch will have to be on the `test` branch.
    git checkout test
    ```
 
-1. First chery pick the the `base` commit that is now on `scripts`:
+1. First cherry pick the `base` commit that is now on `scripts`:
 
    ```console
    git cherry-pick <commit-id>
@@ -828,7 +849,7 @@ And all commits from the `scripts` branch will have to be on the `test` branch.
 git reset --hard HEAD^
 ```
 
-## Do It Yourself
+### Do It Yourself
 
 1. Repeat the above steps at least 2 more times.
 
@@ -864,7 +885,7 @@ And the `test` branch is based on the `scripts` branch.
 
 What we do not like, however, is that the commits in the `scripts` and the `test` branch are not in the correct order.
 
-In the scripts branch the commits are (top-to-bottom):
+In the `scripts` branch the commits are (top-to-bottom):
 
 - python3-bye: Add scripts
 - Introduce Python3 Bye
@@ -894,3 +915,31 @@ The order we want is (top-to-bottom):
 - c-bye: Add scripts
 - Introduce C Bye
 - c-bye: Add test scripts
+
+So, to update the commit history, follow the steps below:
+
+1. Enter the history update mode.
+   Update the last `9` commits:
+
+   ```console
+   git rebase -i HEAD~9
+   ```
+
+   You are now in a custom editor mode where you can update the commits.
+
+1. Move the commits (cut & paste) to get to the new commit history.
+   Do this by cutting and pasting the lines in the commit history.
+
+1. Save the custom editor mode.
+
+You're done.
+Check the new commit history with:
+
+```console
+git log
+git log --oneline
+```
+
+### Do It Yourself
+
+Edit the commit history on the `test` branch are in the correct order, the same they are now on the `scripts` branch.
