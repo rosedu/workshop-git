@@ -365,7 +365,7 @@ We just need to know how to do that.
 
    ```console
    git status
-   git restore c-bye/build.fc.x86_64
+   git restore --staged c-bye/build.fc.x86_64
    git status
    ```
 
