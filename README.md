@@ -12,11 +12,16 @@ cd workshop-git/
 
 And let's get going! 🚀
 
-**Note**: If, at any point in time, you miss a command, or something bad simply happened, reset the environment by running:
+> [!NOTE]
+> If, at any point in time, you miss a command, or something bad simply happened, reset the environment by running:
+>
+> ```console
+> ./reset-all.sh
+> ```
 
-```console
-./reset-all.sh
-```
+> [!IMPORTANT]
+> We re recommend you write all commands below by hand, i.e. without using copy & paste.
+> This will get you better accustomed to Git and Git commands.
 
 ## Inspect Repository
 
@@ -104,8 +109,8 @@ And let's get going! 🚀
 1. Do more listing.
    Try out the other commands [here](https://graphite.dev/guides/git-list-all-files).
 
-1. Check out the `test` branch from the remote `origin/test` branch.
-   List contents, check out the branch, get back to the `main` branch.
+1. Check out (switch to) the `test` branch from the remote `origin/test` branch.
+   List contents, get back to the `main` branch.
 
 ## Inspect Commit History
 
@@ -379,7 +384,7 @@ We want to edit the commit history and:
    ./reset-all.sh
    ```
 
-   The go back to step 1 and prepare the setup for commit history editing.
+   The go back to step 1 and prepare the messed up environment again.
 
 1. Go into commit history editing mode:
 
@@ -843,11 +848,12 @@ And all commits from the `scripts` branch will have to be on the `test` branch.
    git log
    ```
 
-**Note**: If, at any point, you did something wrong, recall that you can drop the top commit by doing:
-
-```console
-git reset --hard HEAD^
-```
+> [!NOTE]
+> If, at any point, you did something wrong, recall that you can drop the top commit by doing:
+>
+> ```console
+> git reset --hard HEAD^
+> ```
 
 ### Do It Yourself
 
