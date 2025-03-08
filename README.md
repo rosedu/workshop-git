@@ -31,11 +31,22 @@ And let's get going! 🚀
    git status
    ```
 
+   Git commands happen in a repository.
+   A **repository** is the collection of data and metadata that you use to manage content, typically code.
+
+   All Git commands start with `git`.
+   They are then followed by arguments.
+   The `status` argument is the argument of choice to get the state of the repository and the current branch.
+   `git status` is probably the most used Git command, due to it providing information on the repository state.
+
 1. See local branches:
 
    ```console
    git branch
    ```
+
+   A **branch** is a specific setup and evolution of the repository.
+   A repository consists of multiple branches, among which you can switch.
 
 1. See local and remote branches:
 
@@ -43,12 +54,21 @@ And let's get going! 🚀
    git branch -a
    ```
 
-1. Check out remote branches locally:
+   A local repository is typically a **clone** of a remote repository.
+   It can also be connected to multiple remote repositories.
+   All repositories have branches, that may or may not be in sync with each other.
+
+1. Make remote branches available locally:
 
    ```console
    git branch base origin/base
    git branch scripts origin/scripts
    ```
+
+   A local branch can be created to "follow" a remote branch.
+   Note that changes to local branches are not implicitly made available to remote branches or viceversa.
+   You must use specific actions to sync them: `push` and `pull`.
+   We will not cover branch syncing in this workshop.
 
 1. See local branches again.
    Note the difference (green color, `*` - *star* character) between the current branch and other local branches:
@@ -81,6 +101,8 @@ And let's get going! 🚀
    git status
    ls
    ```
+
+   Switching among branches is also called checking out.
 
 1. List contents of another branch without checking out:
 
@@ -130,6 +152,17 @@ And let's get going! 🚀
    git log --pretty=fuller
    ```
 
+   A **commit** is an individual collection of changes to the repository.
+   It represents a given state of the repo.
+   You can compare a commit to a save file or checkpoint in a video game.
+
+   A commit consists of actual changes to the files in the repository and metadata: timestamp, authorship, commit description.
+   Commit description is very important to have a good understanding of the repository and rationale for changes.
+   Be sure to follow [best practices in creating commits and commit descriptions]((https://cbea.ms/git-commit/).
+
+   A branch is a series of commits, called a **history of commits**.
+   Each branch has its own commit history.
+
 1. Show top commit contents:
 
    ```console
@@ -137,11 +170,15 @@ And let's get going! 🚀
    git show HEAD
    ```
 
+   The `HEAD` keyword is an alias for the latest (most recent) commit in the current branch.
+
 1. Show commit contents by commit ID:
 
    ```console
    git show 1a02ae3
    ```
+
+   Each commit is identified by a commit ID, typically a [SHA-1](https://en.wikipedia.org/wiki/SHA-1) hash of the commit contents.
 
 1. Only show actual contents, no metadata:
 
@@ -163,6 +200,8 @@ And let's get going! 🚀
    git checkout main
    ```
 
+   `git blame` shows the latest modification of each line in the file: latest commit ID, together with timestamp and author.
+
 1. Show commits that modified a path:
 
    ```console
@@ -175,6 +214,8 @@ And let's get going! 🚀
    ```console
    git diff base scripts
    ```
+
+   `git diff` shows lines that need to be added (`+`) or removed (`-`) in order to get from the first reference to the second one.
 
 1. Show commit difference between two references:
 
@@ -193,6 +234,16 @@ And let's get going! 🚀
 1. Do more history inspection.
 
 ## Configure Git
+
+1. Show local Git configuration:
+
+   ```
+   git config -l
+   git config user.name
+   git config user.email
+   ```
+
+   Git uses configuration variables, such as `user.name` or `user.email` or `color.ui` to customize command effects, i.e. author being used, coloring, aliases, files to be ignored.
 
 1. If not already configured, configure your name and e-mail:
 
@@ -216,12 +267,18 @@ And let's get going! 🚀
    git lg
    ```
 
+   An **alias** is typically a short name for a common command, to make typing more efficient or to make it easier to remember.
+
 1. Check the configuration:
 
    ```console
    cat .git/config
    cat ~/.gitconfig
    ```
+
+   The `.git/config` is the local repository Git configuration file.
+   The `~/.gitconfig` is the global Git configuration file.
+   The `git config` command reads from and makes updates to these files.
 
 ## Clean Up / Reset Your Git Environment
 
@@ -273,6 +330,12 @@ We just need to know how to do that.
    git status
    ```
 
+   `git clean` removes files that are not used (not tracked) in the repository.
+   Files are **tracked** if there are commits with contents of those files.
+   Files are **not tracked / untracked** if there are no commits related to those files.
+
+   Untracked files appear, in the `git status` output, typically colored red, marked with `Untracked files:`.
+
 1. Restore the deleted `Makefile`:
 
    ```console
@@ -280,6 +343,9 @@ We just need to know how to do that.
    git restore c-hello/Makefile
    git status
    ```
+
+   When you delete or modify a tracked file, its changes appear in the **"tracking" area**, typically colored red, marked with `Changes not staged for commit:`.
+   You can restore changes to its original contents.
 
 1. Restore the staged deleted `hello.c`:
 
@@ -290,6 +356,10 @@ We just need to know how to do that.
    git restore c-hello/hello.c
    git status
    ```
+
+   When you delete or modify a tracked file, and then you add changes (via `git add` or `git rm`), its changes appear in the **"staging" area**, typically colored green, marked with `Changes to be committed:`.
+   You can get a file from the "staging" area to the "tracking" area via `git restore --staged`.
+   You can then restore changes to its original contents, and remove the file from the "tracking" area, via `git restore`.
 
 1. Restore the staged new file `c-bye/build.fc.x86_64` to create a proper commit:
 
@@ -314,6 +384,9 @@ We just need to know how to do that.
    rm blabla.txt
    ```
 
+   Adding a caret sign (`^`) after a commit reference points to the previous commit.
+   `git reset` discards all commits after the argument reference.
+
 1. Update the commit message from `Bue` to `Bye`:
 
    ```console
@@ -322,6 +395,9 @@ We just need to know how to do that.
    git log
    git show
    ```
+
+   The `git commit --amend` command presents a commit description edit screen.
+   After saving the changes and exiting the edit screen, the commit description (and its ID / SHA hash) are updated.
 
 1. Create a new commit with the `c-bye/build.fc.x86_64` file:
 
@@ -392,6 +468,12 @@ We want to edit the commit history and:
    git rebase -i HEAD~3
    ```
 
+   The `rebase` command positions you somewhere else in the commit history.
+   You can make updates to commits from that point onward.
+
+   The `~N` construct is a reference to `N` commits before the current one.
+   `HEAD~3` means 3 commits before the top commit.
+
    You get an editor screen with an output like this:
 
    ```text
@@ -412,7 +494,7 @@ We want to edit the commit history and:
    That is, the first line (the bad commit message) should have `edit` instead of `pick` - we edit the commit.
    And the second line (the extra commit) should have `drop` instead of `pick` - we drop the commit.
 
-   Save the editor screen.
+   Save and exit the editor screen.
 
 1. We are currently editing the typo commit:
 
@@ -436,6 +518,8 @@ We want to edit the commit history and:
    git rebase --continue
    ```
 
+   Each `git rebase --continue` command gets you to the next commit to update.
+
 1. The extra commit has been dropped:
 
    ```console
@@ -450,6 +534,7 @@ We want to edit the commit history and:
    ```
 
    It says "No rebase in progress?", meaning the rebase is done.
+   There are no more commits to update.
 
 ### Do It Yourself
 
@@ -578,7 +663,7 @@ Let's create commit to `base` branch:
 
    You get an editable screen.
    Edit the commit message to have contents similar to the one for C Hello.
-   Use copy-paste.
+   Use copy & paste.
 
    You can use `git commit --amend` to constantly update the commit.
 
@@ -648,7 +733,7 @@ Let's create commit to `scripts` branch:
 
    You get an editable screen.
    Edit the commit message to have contents similar to the one for C Hello.
-   Use copy-paste.
+   Use copy & paste.
 
    You can use `git commit --amend` to constantly update the commit.
 
@@ -823,6 +908,8 @@ And all commits from the `scripts` branch will have to be on the `test` branch.
    ```
 
    This is the same commit ID from above.
+
+   **Cherry-picking** is selecting a commit, or series of commits and adding them on top of the current setup.
 
 1. Now let's get the `c-bye` commit from the `scripts` branch.
    Find out the commit ID in the `scripts` branch:
