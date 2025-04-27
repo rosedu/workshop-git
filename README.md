@@ -158,7 +158,7 @@ And let's get going! 🚀
 
    A commit consists of actual changes to the files in the repository and metadata: timestamp, authorship, commit description.
    Commit description is very important to have a good understanding of the repository and rationale for changes.
-   Be sure to follow [best practices in creating commits and commit descriptions]((https://cbea.ms/git-commit/).
+   Be sure to follow [best practices in creating commits and commit descriptions](https://cbea.ms/git-commit/).
 
    A branch is a series of commits, called a **history of commits**.
    Each branch has its own commit history.
