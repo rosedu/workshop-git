@@ -20,7 +20,7 @@ And let's get going! 🚀
 > ```
 
 > [!IMPORTANT]
-> We re recommend you write all commands below by hand, i.e. without using copy & paste.
+> We recommend you write all commands below by hand, i.e. without using copy & paste.
 > This will get you better accustomed to Git and Git commands.
 
 ## Inspect Repository
@@ -66,7 +66,7 @@ And let's get going! 🚀
    ```
 
    A local branch can be created to "follow" a remote branch.
-   Note that changes to local branches are not implicitly made available to remote branches or viceversa.
+   Note that changes to local branches are not implicitly made available to remote branches or vice versa.
    You must use specific actions to sync them: `push` and `pull`.
    We will not cover branch syncing in this workshop.
 
@@ -104,27 +104,6 @@ And let's get going! 🚀
 
    Switching among branches is also called checking out.
 
-1. List contents of another branch without checking out:
-
-   ```console
-   git ls-tree scripts
-   git ls-tree scripts:c-fs
-   git ls-tree scripts:c-fs/rootfs
-   git ls-tree scripts --name-only
-   git ls-tree scripts:c-fs --name-only
-   git ls-tree scripts:c-fs/rootfs --name-only
-   git ls-tree -r scripts --name-only
-   ```
-
-   The construct `scripts:c-fs` means the `c-fs` filesystem entry in the `scripts` branch.
-   Similarly, the construct `scripts:c-fs/rootfs` means the `c-fs/rootfs` filesystem entry in the `scripts` branch.
-
-1. Show contents of a file on another branch without checking out:
-
-   ```console
-   git show scripts:c-fs/build.qemu.x86_64
-   git show scripts:c-fs/README.scripts.md
-   ```
 
 ### Do It Yourself
 
@@ -216,15 +195,6 @@ And let's get going! 🚀
    ```
 
    `git diff` shows lines that need to be added (`+`) or removed (`-`) in order to get from the first reference to the second one.
-
-1. Show commit difference between two references:
-
-   ```console
-   git cherry -v main scripts
-   git cherry -v scripts main
-   git cherry -v main d379011
-   git cherry -v d379011 main
-   ```
 
 ### Do It Yourself
 
@@ -321,7 +291,7 @@ We just need to know how to do that.
    ./reset-all.sh
    ```
 
-   The go back to step 1 and prepare the messed up environment again.
+   Then go back to step 1 and prepare the messed up environment again.
 
 1. Let's first get rid of all the temporary files we do not require (they were added by mistake):
 
@@ -460,7 +430,7 @@ We want to edit the commit history and:
    ./reset-all.sh
    ```
 
-   The go back to step 1 and prepare the messed up environment again.
+   Then go back to step 1 and prepare the messed up environment again.
 
 1. Go into commit history editing mode:
 
@@ -1035,4 +1005,4 @@ git log --oneline
 
 ### Do It Yourself
 
-Edit the commit history on the `test` branch are in the correct order, the same they are now on the `scripts` branch.
+Edit the commit history on the `test` branch so the commits are in the correct order, just like they are on the `scripts` branch.
