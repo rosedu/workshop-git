@@ -17,6 +17,7 @@ git merge --abort > /dev/null 2>&1
 git rebase --abort > /dev/null 2>&1
 git cherry-pick --abort > /dev/null 2>&1
 git reset --hard HEAD
+git stash clear
 
 clean_branch test
 clean_branch scripts

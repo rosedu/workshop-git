@@ -1,14 +1,97 @@
 # Git Workshop
 
+Git tracks your work across three areas, and you move changes between them with two key commands:
+
+- **working directory**: the files you are currently editing on disk.
+- **staging area**: the "waiting room" where you place the changes you want to include in the next commit, using `git add`.
+- **repository**: the permanent history of commits, where changes land once you run `git commit`.
+
+As the image below shows, `git add` moves changes from the working directory into the staging area, and `git commit` records the staged changes into the repository:
+
+<p align="center">
+  <img src="images/git-flow.png" alt="Git flow: working directory, staging area and repository connected by git add and git commit" width="600">
+</p>
+
+## Create Your Own Repository
+
+But how do you create your own directory and repository in the first place?
+
+Before working on an existing project, let's warm up by building a repository from scratch.
+This way you get to see how a repository is "born", and then connect it to the remote repository we will use throughout this workshop.
+
+> [!IMPORTANT]
+> We recommend you write all commands below by hand, i.e. without using copy & paste.
+> This will get you better accustomed to Git and Git commands.
+
+1. Create a new directory for your project and enter it:
+
+   ```console
+   mkdir workshop-git
+   cd workshop-git/
+   ```
+
+   This is just a plain directory on disk.
+   It is **not** a Git repository yet.
+
+1. Initialize the repository:
+
+   ```console
+   git init
+   ```
+
+   `git init` turns the current directory into a Git repository.
+   It creates a hidden `.git/` directory that holds all the data and metadata Git needs to track your work.
+
+1. Look at what `git init` created:
+
+   ```console
+   ls -a
+   ```
+
+   You now see the `.git/` directory: your plain directory is now a Git repository.
+
+So far the repository is empty and only lives on your machine.
 This is a practical workshop consisting of common Git-related actions.
 It is based on the [`unikraft/catalog-core` repository](https://github.com/unikraft/catalog-core), giving us a concrete Git repository to screw up ... hmmmm ... to do wonderful amazing great things to.
+Let's connect our fresh repository to it and bring in its contents.
 
-First of all, clone the [repository](https://github.com/rosedu/workshop-git):
+1. Add the workshop repository as a remote named `origin`:
 
-```console
-git clone https://github.com/rosedu/workshop-git
-cd workshop-git/
-```
+   ```console
+   git remote add origin https://github.com/rosedu/workshop-git
+   ```
+
+   A **remote** is a reference to another repository, typically hosted online.
+   Naming it `origin` is just the widely used convention for the main remote.
+
+1. Download all the branches and history from the remote:
+
+   ```console
+   git fetch origin
+   ```
+
+   `git fetch` downloads everything from the remote (all branches and commits) and stores it locally as remote-tracking branches (`origin/main`, `origin/base`, `origin/scripts`, ...), **without** touching your working directory yet.
+   We need these branches available for the later parts of the workshop.
+
+1. Pull the workshop contents into your working directory:
+
+   ```console
+   git pull origin main
+   ```
+
+   `git pull` fetches the `main` branch from the remote and merges it into your current branch.
+   Your previously empty repository now contains all the workshop files.
+
+> [!TIP]
+> The four steps above - `git init`, `git remote add`, `git fetch`, and `git pull` - are exactly what `git clone` does for you in a single command.
+> Instead of building the repository by hand, you could have obtained the same result with:
+>
+> ```console
+> git clone https://github.com/rosedu/workshop-git
+> cd workshop-git/
+> ```
+>
+> We did it step by step here so you can see how a repository is created and connected to a remote.
 
 And let's get going! 🚀
 
@@ -18,10 +101,6 @@ And let's get going! 🚀
 > ```console
 > ./reset-all.sh
 > ```
-
-> [!IMPORTANT]
-> We recommend you write all commands below by hand, i.e. without using copy & paste.
-> This will get you better accustomed to Git and Git commands.
 
 ## Inspect Repository
 
@@ -402,126 +481,99 @@ We just need to know how to do that.
    ./reset-all.sh
    ```
 
-## Edit Commit History
+## Stash Changes
 
-Let's get to a situation where we need to repair the commit history.
-We will have a setup where we have the following stack of commits:
+Sometimes you are in the middle of editing files, but you are **not** ready to commit yet.
+Maybe you need to quickly switch to another branch, or pull in new changes, but Git complains that you have uncommitted work.
 
-- (top) correct commit
-- (next) commit that shouldn't exist (`bla bla` commit)
-- (next-next) commit with a typo (`Bue` instead of `Bye`)
+`git stash` solves this: it **pauses** your work by setting your uncommitted changes aside, leaving you a clean working directory.
+Later, you **resume** your work by bringing those changes back, exactly where you left off.
 
-We want to edit the commit history and:
+You can think of the stash as a separate "drawer" where Git temporarily stores your unfinished changes.
+It is neither the working directory, nor the staging area, nor the repository: it is a place on the side.
 
-- Remove the `bla bla` commit.
-- Fix the typo.
+Make sure you are on the `main` branch and everything is clean:
 
-1. Create the setup:
+```console
+git checkout main
+git status
+```
 
-   ```console
-   ./set-up-history-edit.sh
-   git status
-   git log
-   ```
+Or, reset the repository:
 
-1. **Note**: If, at any point in time, you miss a command, or something bad simply happened, reset the environment by running:
+```console
+./reset-all.sh
+```
 
-   ```console
-   ./reset-all.sh
-   ```
-
-   Then go back to step 1 and prepare the messed up environment again.
-
-1. Go into commit history editing mode:
+1. Make a change to a tracked file, so you have some work in progress:
 
    ```console
-   git rebase -i HEAD~3
-   ```
-
-   The `rebase` command positions you somewhere else in the commit history.
-   You can make updates to commits from that point onward.
-
-   The `~N` construct is a reference to `N` commits before the current one.
-   `HEAD~3` means 3 commits before the top commit.
-
-   You get an editor screen with an output like this:
-
-   ```text
-   pick e5442f0 Add C Bue application
-   pick 06eb1fa bla bla
-   pick 74f3d3e c-bye: Add Firecracker build script for x86_64
-   ```
-
-1. Edit the rebase screen contents in order to edit the commit with the typo (`Bue` instead of `Bye`) and to drop the extra commit (the one with `bla bla`).
-   Have the editor screen have the contents:
-
-   ```
-   edit e5442f0 Add C Bue application
-   drop 06eb1fa bla bla
-   pick 74f3d3e c-bye: Add Firecracker build script for x86_64
-   ```
-
-   That is, the first line (the bad commit message) should have `edit` instead of `pick` - we edit the commit.
-   And the second line (the extra commit) should have `drop` instead of `pick` - we drop the commit.
-
-   Save and exit the editor screen.
-
-1. We are currently editing the typo commit:
-
-   ```console
-   git log
-   git show
-   ```
-
-1. Update the commit message from `Bue` to `Bye`:
-
-   ```console
-   git log
-   git commit --amend    # do edit as required
-   git log
-   git show
-   ```
-
-1. Continue the commit history editing:
-
-   ```console
-   git rebase --continue
-   ```
-
-   Each `git rebase --continue` command gets you to the next commit to update.
-
-1. The extra commit has been dropped:
-
-   ```console
-   git log
+   echo "# work in progress" >> README.md
    git status
    ```
 
-1. The commit history editing (aka the rebase) is done:
+   `git status` shows your change under `Changes not staged for commit:`.
+   This is the work we want to pause.
+
+1. Pause your work by stashing it:
 
    ```console
-   git rebase --continue
+   git stash
+   git status
    ```
 
-   It says "No rebase in progress?", meaning the rebase is done.
-   There are no more commits to update.
+   `git stash` takes your uncommitted changes (both staged and unstaged), saves them aside, and restores your working directory to a clean state.
+   Notice how `git status` now reports `nothing to commit, working tree clean`: your change seems to be gone, but it is only set aside.
+
+1. List your stashed changes:
+
+   ```console
+   git stash list
+   ```
+
+   Each stash entry is shown as `stash@{0}`, `stash@{1}`, ... with `stash@{0}` being the most recent one.
+   Your paused work is safely stored there.
+
+   You can also peek at what a stash contains, without restoring it:
+
+   ```console
+   git stash show -p
+   ```
+
+1. Resume your work by bringing the changes back:
+
+   ```console
+   git stash pop
+   git status
+   ```
+
+   `git stash pop` re-applies the most recent stash to your working directory and then **removes** it from the stash list.
+   Your change to `README.md` is back, exactly as you left it: you are right where you stopped.
+
+   Check that the stash list is now empty:
+
+   ```console
+   git stash list
+   ```
+
+> [!TIP]
+> If you want to bring the changes back but **keep** the stash entry (for example, to apply it on several branches), use `git stash apply` instead of `git stash pop`.
+> You can later remove a stash you no longer need with `git stash drop`.
 
 ### Do It Yourself
 
-1. Repeat the above steps at least 2 more times.
-
-   Aim to have one time without checking the instructions.
-   That is, run the `./set-up-history-edit.sh` script and then repair the commit history by yourself.
-
-   If, at any point, you get lost, run the reset script:
+1. Reset the configuration:
 
    ```console
    ./reset-all.sh
    ```
 
-1. Do your own commit history that you want to edit.
-   Go to a given branch, create commits, create some bad or extra commits.
-   Then repair the commit history.
+1. Reproduce the classic stash scenario: switching branches with unfinished work.
+
+   - On the `main` branch, make a change to a tracked file.
+   - Stash it with `git stash`.
+   - Check out another branch (for example `git checkout base`), look around, then check out `main` again.
+   - Bring your work back with `git stash pop`.
 
    If, at any point, you get lost, run the reset script:
 
@@ -824,185 +876,3 @@ Let's create commit to `test` branch:
    1. The `test...` files will go to the `test` branch.
 
    Follow the steps for C bye to create the commits for Python3 Bye.
-
-## Create Commit History
-
-At this point there are commits in the `base` branch that are not part of the `scripts` branch.
-And there are commits in the `scripts` branch that are not part of the `test` branch.
-
-We aim to have the `scripts` branch built on top of the `base` branch.
-And we want to have the `test` branch built on top of the `scripts` branch.
-
-For this, all commits from the `base` branch will have to be on the `scripts` branch.
-And all commits from the `scripts` branch will have to be on the `test` branch.
-
-1. To get the `c-bye` commit from the `base` branch to the `scripts` branch, first check out the `scripts` branch:
-
-   ```console
-   git checkout scripts
-   ```
-
-1. Find out the commit ID in the `base` branch:
-
-   ```console
-   git log base
-   ```
-
-   Scroll the commit history and copy the commit ID belonging to the `c-bye` program.
-   That is, the ID of the commit you created earlier with the message: `Introduce C Bye on Unikraft`.
-
-1. Use the commit ID cherry pick the commit from the `base` branch to the `scripts` branch:
-
-   ```console
-   git cherry-pick <commit-id>
-   ```
-
-   Replace `<commit-id>` with the commit ID you copied above (copy & paste).
-
-1. Check the updated history of the `scripts` branch:
-
-   ```console
-   git log
-   ```
-
-1. To get the `c-bye` commits from the `scripts` branch to the `test` branch, first check out the `test` branch:
-
-   ```console
-   git checkout test
-   ```
-
-1. First cherry pick the `base` commit that is now on `scripts`:
-
-   ```console
-   git cherry-pick <commit-id>
-   ```
-
-   This is the same commit ID from above.
-
-   **Cherry-picking** is selecting a commit, or series of commits and adding them on top of the current setup.
-
-1. Now let's get the `c-bye` commit from the `scripts` branch.
-   Find out the commit ID in the `scripts` branch:
-
-   ```console
-   git log scripts
-   ```
-
-   Scroll the commit history and copy the commit ID belonging to the `c-bye` program.
-   That is, the ID of the commit you created earlier with the message: `c-hello: Add scripts`.
-
-1. Use the commit ID cherry pick the commit from the `scripts` branch to the `test` branch:
-
-   ```console
-   git cherry-pick <new-commit-id>
-   ```
-
-   Replace `<new-commit-id>` with the commit ID you copied above (copy & paste).
-
-1. Check the updated history of the `scripts` branch:
-
-   ```console
-   git log
-   ```
-
-> [!NOTE]
-> If, at any point, you did something wrong, recall that you can drop the top commit by doing:
->
-> ```console
-> git reset --hard HEAD^
-> ```
-
-### Do It Yourself
-
-1. Repeat the above steps at least 2 more times.
-
-   Aim to have one time without checking the instructions.
-   That is, have the `scripts` based on the `base` branch, and have the `test` branch based on the `scripts` branch.
-
-   For starters, drop the newly cherry-picked commit from the `scripts` branch:
-
-   ```console
-   git checkout scripts
-   git reset --hard HEAD^
-   ```
-
-   And drop the newly cherry-picked commits from the `test` branch:
-
-   ```console
-   git checkout test
-   git reset --hard HEAD^^
-   ```
-
-   Now repeat the steps above.
-
-1. Do the same steps for the C++ Bye program.
-   That is, have the `scripts` based on the `base` branch, and have the `test` branch based on the `scripts` branch.
-
-1. Do the same steps for the Python Bye program.
-   That is, have the `scripts` based on the `base` branch, and have the `test` branch based on the `scripts` branch.
-
-## Update Commit History
-
-At this point, the `scripts` branch is based on the `base` branch.
-And the `test` branch is based on the `scripts` branch.
-
-What we do not like, however, is that the commits in the `scripts` and the `test` branch are not in the correct order.
-
-In the `scripts` branch the commits are (top-to-bottom):
-
-- python3-bye: Add scripts
-- Introduce Python3 Bye
-- cpp-bye: Add scripts
-- Introduce C++ Bye
-- c-bye: Add scripts
-- Introduce C Bye
-- python3-bye: Add test scripts
-- cpp-bye: Add test scripts
-- c-bye: Add test scripts
-
-Use `git log` to confirm this:
-
-```console
-git log
-git log --oneline
-```
-
-The order we want is (top-to-bottom):
-
-- python3-bye: Add test scripts
-- python3-bye: Add scripts
-- Introduce Python3 Bye
-- cpp-bye: Add test scripts
-- cpp-bye: Add scripts
-- Introduce C++ Bye
-- c-bye: Add scripts
-- Introduce C Bye
-- c-bye: Add test scripts
-
-So, to update the commit history, follow the steps below:
-
-1. Enter the history update mode.
-   Update the last `9` commits:
-
-   ```console
-   git rebase -i HEAD~9
-   ```
-
-   You are now in a custom editor mode where you can update the commits.
-
-1. Move the commits (cut & paste) to get to the new commit history.
-   Do this by cutting and pasting the lines in the commit history.
-
-1. Save the custom editor mode.
-
-You're done.
-Check the new commit history with:
-
-```console
-git log
-git log --oneline
-```
-
-### Do It Yourself
-
-Edit the commit history on the `test` branch so the commits are in the correct order, just like they are on the `scripts` branch.
